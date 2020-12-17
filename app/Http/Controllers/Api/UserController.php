@@ -49,8 +49,8 @@ class UserController extends Controller
 
         Validator::make($data, [
             'phone' => 'required',
-            'mobile_phone' => 'required1'
-        ]);
+            'mobile_phone' => 'required'
+        ])->validate();
 
 
         try {
@@ -85,8 +85,11 @@ class UserController extends Controller
     public function show($id)
     {
         try {
+            //se usar o metodo with ele traz no array de usuario
+            //a relação que passar como parametro no caso abaixo profile
+            $user = $this->user->with('profile')->findOrFail($id);
 
-            $user = $this->user->findOrFail($id);
+            $user->profile->social_networks = unserialize($user->profile->social_networks);
 
             return response()->json(
                 ['data' => $user],
@@ -117,11 +120,21 @@ class UserController extends Controller
             unset($data['password']);
         }
 
+        Validator::make($data, [
+            'profile.phone' => 'required',
+            'profile.mobile_phone' => 'required'
+        ])->validate();
+
         try {
+            $profile = $data['profile'];
+            dd($profile);
+            $profile['social_networks'] = serialize($profile['social_networks']);
 
             $user = $this->user->findOrFail($id);
 
             $user->update($data);
+
+            $user->profile()->update($profile);
 
             return response()->json([
                 'data' => [

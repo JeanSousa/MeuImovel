@@ -24,6 +24,11 @@ class RealState extends Model
         return $this->belongsToMany(Category::class, 
         'real_state_categories', 'real_state_id','categories_id');
     }
+
+    public function photos()
+    {
+        return $this->hasMany(RealStatePhoto::class, 'real_state_id');
+    }
 }
 
 

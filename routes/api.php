@@ -38,6 +38,12 @@ Route::prefix('v1')->namespace('Api')->group(function (){ // api/v1
         Route::resource('categories', 'CategoryController'); // api/v1/categories/
 
     });
+
+    Route::name('photos.')->prefix('photos')->group(function (){
+       Route::delete('/{id}', 'RealStatePhotoController@remove')->name('delete');
+
+       Route::put('/set-thumb/{photoId}/{realState}', 'RealStatePhotoController@setThumb')->name('delete');
+    });
 });
 
 

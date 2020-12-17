@@ -47,6 +47,8 @@ class RealStateController extends Controller
     public function store(RealStateRequest $request)
     {
         $data = $request->all();
+        
+        $images = $request->file('images');
 
         try {
 
@@ -57,6 +59,22 @@ class RealStateController extends Controller
                 //para salvar seu id e o id da categoria na tabela real_state_categories
                 $realState->categories()->sync($data['categories']);
 
+            }
+
+            if ($images) {
+                $imagesUploaded = [];
+
+                foreach ($images as $image) { 
+                   //2 parametro de store é o driver
+                  //1 parametro nome da pasta criada no caminho do driver
+                   $path = $image->store('images', 'public');
+
+                   $imagesUploaded[] = ['photo' => $path, 'is_thumb' => false];
+                }
+
+                //create many vai criar muitos registros na tabela imagens referente ao real state
+                //vai criar quantas estiver no array
+                $realState->photos()->createMany($imagesUploaded);
             }
 
             return response()->json([
@@ -91,6 +109,28 @@ class RealStateController extends Controller
                 $realState->categories()->sync($data['categories']);
 
             }
+
+            //para atualizar e conseguir mandar o binario foto e o texto normal
+            //precisamos enviar via post para ser interpretado o formulario como form-data
+            //e mandamos a diretiva _method= put para atualizar 
+            $images = $request->file('images');
+
+            if ($images) {
+                $imagesUploaded = [];
+
+                foreach ($images as $image) { 
+                   //2 parametro de store é o driver
+                  //1 parametro nome da pasta criada no caminho do driver
+                   $path = $image->store('images', 'public');
+
+                   $imagesUploaded[] = ['photo' => $path, 'is_thumb' => false];
+                }
+
+                //create many vai criar muitos registros na tabela imagens referente ao real state
+                //vai criar quantas estiver no array
+                $realState->photos()->createMany($imagesUploaded);
+            }
+
 
             return response()->json([
                 'data' => [
