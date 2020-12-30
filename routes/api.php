@@ -14,36 +14,47 @@ use Illuminate\Http\Request;
 |
 */
 
+
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
+                     //namespace é para controlller
 Route::prefix('v1')->namespace('Api')->group(function (){ // api/v1
-    Route::name('real_states.')->group(function (){ 
-        //api/v1/states (com os prefixos fica assim)
-        Route::resource('real-states', 'RealStateController'); // api/v1/states/
+
+    Route::post('login', 'Auth\\LoginJwtController@login')->name('login');
+
+    //todas as rotas abaixo estão sob o middleware jwt.auth
+    Route::group(['middleware' => ['jwt.auth']], function(){
+
+        Route::name('real_states.')->group(function (){ 
+            //api/v1/states (com os prefixos fica assim)
+            Route::resource('real-states', 'RealStateController'); // api/v1/states/
+    
+        });
+    
+        Route::name('users.')->group(function (){ 
+            //api/v1/users (com os prefixos fica assim)
+            Route::resource('users', 'UserController'); // api/v1/users/
+    
+        });
+    
+        Route::name('categories.')->group(function (){ 
+            Route::get('categories/{id}/real-states', 'CategoryController@realState');
+            //api/v1/categories (com os prefixos fica assim)
+            Route::resource('categories', 'CategoryController'); // api/v1/categories/
+    
+        });
+    
+        Route::name('photos.')->prefix('photos')->group(function (){
+           Route::delete('/{id}', 'RealStatePhotoController@remove')->name('delete');
+    
+           Route::put('/set-thumb/{photoId}/{realState}', 'RealStatePhotoController@setThumb')->name('delete');
+        });
 
     });
-
-    Route::name('users.')->group(function (){ 
-        //api/v1/users (com os prefixos fica assim)
-        Route::resource('users', 'UserController'); // api/v1/users/
-
-    });
-
-    Route::name('categories.')->group(function (){ 
-        Route::get('categories/{id}/real-states', 'CategoryController@realState');
-        //api/v1/categories (com os prefixos fica assim)
-        Route::resource('categories', 'CategoryController'); // api/v1/categories/
-
-    });
-
-    Route::name('photos.')->prefix('photos')->group(function (){
-       Route::delete('/{id}', 'RealStatePhotoController@remove')->name('delete');
-
-       Route::put('/set-thumb/{photoId}/{realState}', 'RealStatePhotoController@setThumb')->name('delete');
-    });
+   
 });
 
 

@@ -30,7 +30,7 @@ class RealStateController extends Controller
     {
         try {
 
-            $realState = $this->realState->findOrFail($id);  
+            $realState = $this->realState->with('photos')->findOrFail($id);  
 
 
             return response()->json([
