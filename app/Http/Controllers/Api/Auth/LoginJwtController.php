@@ -5,12 +5,18 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Api\ApiMessages;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class LoginJwtController extends Controller
 {
     public function login(Request $request)
-    {
+    {  
         $credentials = $request->all(['email', 'password']);
+
+        Validator::make($credentials, [
+            'email' => 'required|string',
+            'password' => 'required|string',
+        ])->validate();
 
         //o helper auth retorna por padrao uma instancia de guards web, 
         //mas vou informar que preciso da api 
@@ -30,4 +36,27 @@ class LoginJwtController extends Controller
 
 
     }
+
+    public function logout()
+    {   //ao fazer logout o token caira na blacklist
+        //devendo assim solicitar outro token
+        auth('api')->logout();
+     
+        return response()->json([
+            'message' => 'Logout Sucessfully!'
+        ],200);
+    }
+
+    //metodo para disponibilizar um endpoint para dar um refresh
+    //para atualizar o token
+    public function refresh()
+    {  
+       $token = auth('api')->refresh();
+
+       return response()->json([
+        'token' => $token
+       ]);
+    }
+
+
 }

@@ -25,6 +25,13 @@ Route::prefix('v1')->namespace('Api')->group(function (){ // api/v1
 
     Route::post('login', 'Auth\\LoginJwtController@login')->name('login');
 
+    Route::get('logout', 'Auth\\LoginJwtController@logout')->name('logout');
+
+    Route::get('refresh', 'Auth\\LoginJwtController@refresh')->name('refresh');
+
+    Route::get('/search', 'RealStateSeachController@index')->name('search');
+
+
     //todas as rotas abaixo estão sob o middleware jwt.auth
     Route::group(['middleware' => ['jwt.auth']], function(){
 
