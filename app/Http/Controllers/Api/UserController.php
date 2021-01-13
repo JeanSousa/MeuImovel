@@ -127,7 +127,7 @@ class UserController extends Controller
 
         try {
             $profile = $data['profile'];
-            dd($profile);
+            
             $profile['social_networks'] = serialize($profile['social_networks']);
 
             $user = $this->user->findOrFail($id);

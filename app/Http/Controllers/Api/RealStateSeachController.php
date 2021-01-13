@@ -34,6 +34,7 @@ class RealStateSeachController extends Controller
            $repository->selectFilter($request->get('fields'));
        }
 
+
        $repository->setLocation($request->all(['state', 'city']));
 
 
