@@ -31,6 +31,7 @@ Route::prefix('v1')->namespace('Api')->group(function (){ // api/v1
 
     Route::get('/search', 'RealStateSeachController@index')->name('search');
 
+    Route::get('/search/{real_sate_id}', 'RealStateSeachController@show')->name('search_single');
 
     //todas as rotas abaixo estão sob o middleware jwt.auth
     Route::group(['middleware' => ['jwt.auth']], function(){
